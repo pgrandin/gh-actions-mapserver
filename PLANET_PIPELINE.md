@@ -6,6 +6,10 @@ Hugging Face Storage Buckets. The regional build pipeline may change and preserv
 extra merge information. Existing regional `.bin` releases are useful fixtures,
 but are not the required intermediate format for this pipeline.
 
+Priority clarified: prove map correctness before setting up Hugging Face storage.
+There is no HF bucket yet. No bucket or credentials are needed for the current
+overlap/stitching acceptance work, and the hosting test is deferred.
+
 The target is the existing regional GitHub Actions runners (`ubuntu-latest`),
 confirmed by the user. Public-repository Linux runners currently specify 4 CPUs,
 16 GB RAM and 14 GB SSD, with a six-hour job execution limit. The existing regional
@@ -130,6 +134,24 @@ Then upload that small file to the selected HF bucket, verify explicit ranges,
 and run the same Navit queries through lazy mounted storage. Measure peak RAM,
 scratch use, elapsed time, bytes transferred and request counts. Scale only once
 the correctness and resource measurements pass.
+
+The Navit fork now has `contrib/binfile/validate_chunks.py`, an offline real-OSM
+test with overlapping west/east Monaco chunks and a monolithic reference. It
+matches all 13,951 compiled feature records, native feature traversal and
+town/street/house searches, and six cross-boundary routes including full route
+geometry. A sparse ZIP64 variant repeats the checks with all map members beyond
+4 GiB. The fixture includes shared nodes/relations as context; distributing that
+context within the planet budget is not solved by this test.
+
+The test found and fixed overlap rejection for identical self-intersecting roads,
+unnecessary rejection of parallel paths, non-routing feature duplicates, lost
+town/boundary identities, and two existing address-search bugs in the reader.
+Full search acceptance uses the patched reader. The file format, native traversal,
+town/street searches and routes were also checked with the unmodified reader.
+Four-coordinate via-way restrictions remain ignored by the current route engine;
+monolithic/merged equivalence is not proof of their enforcement. These remaining
+gaps prevent claiming a fully validated planet today. Finish correctness and
+bounded context planning before resuming the HF experiment.
 
 `scripts/probe_hf_ranges.py` prepares the bounded byte-range verification portion
 of this test. It does not upload or mutate objects. Supply the selected namespace,

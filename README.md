@@ -35,6 +35,12 @@ followed by streaming assembly and a Hugging Face storage test. See the
 [planet pipeline design](PLANET_PIPELINE.md). The existing-binfile merger below
 provides compatibility and regression tests for that work.
 
+Current priority is proving map correctness; HF setup is deferred. The Navit
+fork's [adjoining-chunk acceptance test](https://github.com/pgrandin/navit/blob/fix/binfile-overlap/contrib/binfile/README.md#reproducible-real-adjoining-chunk-proof)
+now compares real overlapping OSM chunks with a monolithic conversion, including
+features, native routes/searches and ZIP64 offsets beyond 4 GiB. This is a small
+correctness proof, not yet a complete planet build within the runner budget.
+
 The **Merge regional binfiles** workflow runs the conservative merger from
 [pgrandin/navit](https://github.com/pgrandin/navit/tree/fix/binfile-overlap/contrib/binfile).
 Select a fixed release date and comma-separated region prefixes. It downloads

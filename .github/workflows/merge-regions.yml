@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: pgrandin/navit
-          ref: 479a79dad67f7ef7da3f8bb7dbb498dd7c1881ba
+          ref: 579e5cc950e991948aaa79fef91dbc444d46368d
           path: navit-source
       - name: Download verified maps and reconcile overlaps
         env:
