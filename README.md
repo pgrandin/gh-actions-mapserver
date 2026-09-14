@@ -27,3 +27,34 @@ Place the downloaded `.bin` file somewhere on your device and point Navit to it 
 ## Updates
 
 A new release is published every day. Check the [releases page](https://github.com/navit-gps/gh-actions-mapserver/releases) for the latest build for your region.
+
+## Combining regional maps
+
+The **Merge regional binfiles** workflow runs the conservative merger from
+[pgrandin/navit](https://github.com/pgrandin/navit/tree/fix/binfile-overlap/contrib/binfile).
+Select a fixed release date and comma-separated region prefixes. It downloads
+those exact assets, verifies their SHA-256 hashes, and produces `combined.bin`
+with a `combined.json` provenance report as a workflow artifact. It does not
+publish a release or claim planet coverage.
+
+The merger reconciles overlapping copies of a road when their geometry and
+attributes agree but their intersection splits differ. It also rebases turn
+restrictions to the normalized segments. Conflicting versions, incomplete ways,
+or coincident vertices whose topology cannot be established from the source
+binfiles stop the merge. See the merger's README for supported inputs and
+remaining limitations, including polygon/coastline overlap handling.
+
+The default selection is a small three-country smoke test. Select adjoining
+regions explicitly when testing border routing. Large selections require enough
+disk for source files, output, and the temporary topology database; hosted
+runners are not sized for the full release's roughly 66 GB of source maps.
+
+To run locally with the Navit fork checked out alongside this repository:
+
+```sh
+python3 scripts/merge_release.py --release 2026-09-14 --regions europe-monaco,europe-liechtenstein,europe-andorra --navit-source ../navit-src --output output/combined.bin
+```
+
+GitHub requires a manually dispatched workflow to exist on the repository's
+default branch. Until this branch is merged, use the local command; push and
+pull-request events run the downloader tests without downloading map assets.

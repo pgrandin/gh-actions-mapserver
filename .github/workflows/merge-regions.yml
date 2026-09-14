@@ -1,0 +1,63 @@
+name: Merge regional binfiles
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Fixed source release date (YYYY-MM-DD)'
+        required: true
+        type: string
+      regions:
+        description: 'Comma-separated region prefixes; output covers only these regions'
+        required: true
+        default: 'europe-monaco,europe-liechtenstein,europe-andorra'
+        type: string
+  push:
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/merge-regions.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/merge-regions.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test release selection and checksum handling
+        run: python3 -m unittest discover -s scripts -v
+
+  merge:
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check out the tested merger
+        uses: actions/checkout@v7
+        with:
+          repository: pgrandin/navit
+          ref: 0fd06624f3dcbc1ea07e411f1303579116e741d6
+          path: navit-source
+      - name: Download verified maps and reconcile overlaps
+        env:
+          SOURCE_RELEASE: ${{ inputs.release }}
+          SOURCE_REGIONS: ${{ inputs.regions }}
+        run: |
+          python3 scripts/merge_release.py --release "$SOURCE_RELEASE" --regions "$SOURCE_REGIONS" --navit-source navit-source --output output/combined.bin
+      - name: Upload combined map and provenance
+        uses: actions/upload-artifact@v7
+        with:
+          name: combined-regions
+          path: |
+            output/combined.bin
+            output/combined.json
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 7
