@@ -30,6 +30,11 @@ A new release is published every day. Check the [releases page](https://github.c
 
 ## Combining regional maps
 
+The intended planet build now uses bounded conversion jobs with merge metadata,
+followed by streaming assembly and a Hugging Face storage test. See the
+[planet pipeline design](PLANET_PIPELINE.md). The existing-binfile merger below
+provides compatibility and regression tests for that work.
+
 The **Merge regional binfiles** workflow runs the conservative merger from
 [pgrandin/navit](https://github.com/pgrandin/navit/tree/fix/binfile-overlap/contrib/binfile).
 Select a fixed release date and comma-separated region prefixes. It downloads

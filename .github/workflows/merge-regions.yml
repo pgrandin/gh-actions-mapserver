@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - name: Test release selection and checksum handling
+      - name: Test release downloads and bounded storage range checks
         run: python3 -m unittest discover -s scripts -v
 
   merge:
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: pgrandin/navit
-          ref: 0fd06624f3dcbc1ea07e411f1303579116e741d6
+          ref: 479a79dad67f7ef7da3f8bb7dbb498dd7c1881ba
           path: navit-source
       - name: Download verified maps and reconcile overlaps
         env:
