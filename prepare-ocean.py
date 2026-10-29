@@ -43,7 +43,7 @@ def main():
         for i, box in enumerate(boxes):
             part, start = f'{output}.{i}', time.monotonic()
             result = subprocess.run(['python3', '/usr/local/bin/coastline-polygons.py', '--land-shapefile', LAND,
-                                     '--bounds', ','.join(map(str, box)), part],
+                                     '--bounds=' + ','.join(map(str, box)), part],
                                     check=True, stdout=subprocess.PIPE, text=True)
             meta = json.loads(result.stdout)
             print(json.dumps(dict(bounds=box, land_records=meta['land_records'], water_polygons=meta['water_polygons'],
