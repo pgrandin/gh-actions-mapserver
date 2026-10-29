@@ -5,7 +5,7 @@ name: Process Maps
 env:
   GIT_EDITOR: true
   # Patched maptool: pgrandin/navit fix/water-junctions (prepared ocean polygons).
-  NAVIT_REF: 999f45045201158dd05ca33d1339b6c7d487093c
+  NAVIT_REF: 42fa942b27d6d7add597e3fb13fd378a77382356
 
 
 # Controls when the workflow will run
